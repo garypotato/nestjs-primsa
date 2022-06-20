@@ -13,5 +13,16 @@ datasource db {
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
-  name  String?
+  name  String  
+  password String
+  phone String
+  userType EUserType
+  create_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}
+
+enum EUserType {
+  BUYER
+  REALTOR
+  ADMIN
 }

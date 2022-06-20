@@ -1,8 +1,10 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { EUserType } from '@prisma/client';
+import { GenerateKey } from 'src/dto/user.dto';
 
 @Controller('user')
 export class UserController {
-  @Post('/signup')
+  @Post('/signup:/userType')
   signUp() {
     return 'sign up';
   }
@@ -12,9 +14,9 @@ export class UserController {
     return 'sign in';
   }
 
-  @Post('/genkey')
-  generateKey() {
-    return 'generate key';
+  @Post('/genkey/:userType')
+  generateKey(@Param() userType: EUserType, @Body() {email, name}: GenerateKey) {
+    return userType;
   }
 
   @Get('/me')
