@@ -1,5 +1,16 @@
 import { EUserType } from "@prisma/client";
-import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
+import { Exclude, Expose } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from "class-validator";
+
+export class GenerateKeyDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email:string
+
+    @IsString()
+    @IsNotEmpty()
+    name: string
+}
 
 export class CreateUserDto {
     @IsEmail()
@@ -18,14 +29,41 @@ export class CreateUserDto {
         message: 'phone must be a valid phone number'
     })
     phone: string
+
+    @IsString()
+    @IsOptional()
+    productKey?: string
 }
 
-export class GenerateKey {
+export class SignInDto {
     @IsEmail()
     @IsNotEmpty()
-    email:string
+    email: string
 
     @IsString()
     @IsNotEmpty()
+    password: string
+}
+
+export class GetMeRespondDto {
+    email: string
     name: string
+    phone: string
+    userType: EUserType
+    @Exclude()
+    create_at: Date
+    @Expose({name:'createAt'})
+    createAt(){
+        return this.create_at
+    }
+    @Exclude()
+    update_at: Date
+    @Expose({name:"updateAt"})
+    updateAt(){
+        return this.update_at
+    }
+
+    constructor(partial: Partial<GetMeRespondDto>){
+        Object.assign(this, partial)
+    }
 }
