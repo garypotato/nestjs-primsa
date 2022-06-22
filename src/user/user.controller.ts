@@ -1,14 +1,10 @@
-import { Body, Controller, Get, NotFoundException, Param, ParseEnumPipe, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseEnumPipe, Post, Put, RequestTimeoutException, UnauthorizedException } from '@nestjs/common';
 import { EUserType } from '@prisma/client';
-import { CreateUserDto, GenerateKeyDto, SignInDto } from 'src/dto/user.dto';
+import { CreateUserDto, GenerateKeyDto, SignInDto, UpdateUserDto } from 'src/dto/user.dto';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { GetUser } from 'src/decorators/getUser.decorator';
-
-type TUser = {
-  id: number,
-  email: string
-}
+import { TUserInReq } from 'type';
 
 @Controller('user')
 export class UserController {
@@ -37,8 +33,18 @@ export class UserController {
   }
 
   @Get('/me')
-  getMe(@GetUser('user') user:TUser) {
-    if(!user) throw new NotFoundException()
+  getMe(@GetUser('user') user:TUserInReq) {
+    if(!user) throw new RequestTimeoutException()
     return this.userService.getMe(user);
+  }
+
+  @Put('/update')
+  updateUser(@Body() body: UpdateUserDto, @GetUser('user') user:TUserInReq) {
+    return this.userService.updateUser(body, user)
+  }
+
+  @Put('/delete')
+  deleteUser(@GetUser('user') user:TUserInReq){
+    return this.userService.deleteUser(user)
   }
 }

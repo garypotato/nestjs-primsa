@@ -3,7 +3,8 @@ import { EUserType } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as jwt from 'jsonwebtoken';
-import { GetMeRespondDto } from 'src/dto/user.dto';
+import { GetUserRespondDto } from 'src/dto/user.dto';
+import { TUserInReq } from 'type';
 
 type TGenerateKeyParams = {
     email: string
@@ -27,6 +28,12 @@ type TSignInParams = {
 type TGetMeParams = {
     id: number
     email: string
+}
+
+type TUpdateUserParams = {
+    name?: string
+    phone?: string
+    password?: string
 }
 
 @Injectable()
@@ -61,9 +68,10 @@ export class UserService {
     }
 
     async signIn({email, password}:TSignInParams) {
-        const user = await this.prismaService.user.findUnique({
+        const user = await this.prismaService.user.findFirst({
             where: {
-                email
+                email,
+                is_delete: false
             }
         })
         if(!user) throw new NotFoundException()
@@ -90,7 +98,35 @@ export class UserService {
         })
         if(!user) throw new NotFoundException()
 
-        return new GetMeRespondDto(user)
+        return new GetUserRespondDto(user)
+    }
+
+    async updateUser(body: TUpdateUserParams, userInfo: TUserInReq){
+        const hashedPassword = await bcrypt.hash(body.password, 10)
+        const updateInfo = {
+            ... body.name && {name: body.name},
+            ... body.phone && {phone: body.phone},
+            ... body.password && {password: hashedPassword}
+        }
+        const updatedUser = await this.prismaService.user.update({
+            where: {
+                id: userInfo.id
+            },
+            data: updateInfo
+        })
+        return new GetUserRespondDto(updatedUser)
+    }
+
+    async deleteUser(userInfo: TUserInReq){
+        const deletedUser = await this.prismaService.user.update({
+            where: {
+                id: userInfo.id
+            }, 
+            data: {
+                is_delete: true
+            }
+        })
+        return new GetUserRespondDto({name:deletedUser.name, email:deletedUser.email})
     }
 
     private generateJWT = (id, email) => {

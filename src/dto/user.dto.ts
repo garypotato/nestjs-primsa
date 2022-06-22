@@ -45,11 +45,13 @@ export class SignInDto {
     password: string
 }
 
-export class GetMeRespondDto {
+export class GetUserRespondDto {
     email: string
     name: string
     phone: string
     userType: EUserType
+    @Exclude()
+    password: string
     @Exclude()
     create_at: Date
     @Expose({name:'createAt'})
@@ -62,8 +64,27 @@ export class GetMeRespondDto {
     updateAt(){
         return this.update_at
     }
+    @Exclude()
+    is_delete: boolean
 
-    constructor(partial: Partial<GetMeRespondDto>){
+    constructor(partial: Partial<GetUserRespondDto>){
         Object.assign(this, partial)
     }
+}
+
+export class UpdateUserDto {
+    @IsString()
+    @IsOptional()
+    name?: string
+
+    @MinLength(5)
+    @IsString()
+    @IsOptional()
+    password?: string
+
+    @Matches(/^(?:\+?(61))? ?(?:\((?=.*\)))?(0?[2-57-8])\)? ?(\d\d(?:[- ](?=\d{3})|(?!\d\d[- ]?\d[- ]))\d\d[- ]?\d[- ]?\d{3})$/, {
+        message: 'phone must be a valid phone number'
+    })
+    @IsOptional()
+    phone?: string
 }

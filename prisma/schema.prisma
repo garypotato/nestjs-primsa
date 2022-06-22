@@ -19,6 +19,7 @@ model User {
   userType EUserType
   create_at DateTime @default(now())
   update_at DateTime @updatedAt
+  is_delete Boolean @default(false)
 }
 
 enum EUserType {

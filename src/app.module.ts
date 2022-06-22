@@ -5,9 +5,10 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AddUserIntoHeaderInterceptor } from './interceptors/addUserToHeader.interceptors';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
-  imports: [UserModule, PrismaModule],
+  imports: [UserModule, PrismaModule, FileUploadModule],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_INTERCEPTOR,

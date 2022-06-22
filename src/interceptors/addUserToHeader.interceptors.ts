@@ -1,10 +1,11 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken'
+import { TUserInReq } from 'type';
 
 type TToken = {
     exp: number,
-    data: {id: number, email: string},
+    data: TUserInReq,
     iat: number
 }
 
@@ -15,16 +16,14 @@ export class AddUserIntoHeaderInterceptor implements NestInterceptor {
     const token = req.headers?.authorization?.split('Bearer ')[1];
     try {
       const decodedToken = jwt.verify(token, process.env.JWT_TOKEN) as TToken
-      if(Date.now() < decodedToken.exp) {
-          req.user = decodedToken.data
-      } else {
-          req.user = false;
-      }
+      if (Date.now() > decodedToken.exp) throw new UnauthorizedException()
+      req.user = decodedToken.data
+      return next
+      .handle()
     }
     catch {
-      req.user = false;
-    }
-    return next
+      return next
       .handle()
+    }
   }
 }
