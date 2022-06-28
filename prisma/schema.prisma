@@ -20,10 +20,105 @@ model User {
   create_at DateTime @default(now())
   update_at DateTime @updatedAt
   is_delete Boolean @default(false)
+  properties Property[]
+}
+
+model Property {
+  id    Int     @id @default(autoincrement())
+  unit_num Int?
+  street_num String
+  street_name String
+  street_type EStreetType
+  suburb String
+  state EState
+  postcode Int
+  sale_price Int?
+  rent_price Int?
+  land_size Float?
+  property_type EPropertyType
+  bedroom_num Int
+  studyroom_num Int?
+  bathroom_num Float
+  carpark_num Int?
+  property_action EPropertyAction
+  property_purpose  EPropertyPurpose
+  create_at DateTime @default(now())
+  update_at DateTime @updatedAt
+  is_delete Boolean @default(false)
+  realtor_id Int
+  realtor  User @relation(fields: [realtor_id], references: [id])
 }
 
 enum EUserType {
   BUYER
   REALTOR
   ADMIN
+}
+
+enum EStreetType {
+  ALLEY 
+  ARCADE 
+  AVENUE 
+  BOULEVARD
+  BYPASS
+  CIRCUIT
+  CLOSE
+  CORNER
+  COURT
+  CRESCENT
+  CULDESAC
+  DRIVE
+  ESPLANADE
+  GREEN
+  GROVE
+  HIGHWAY
+  JUNCTION
+  LANE
+  LINK
+  MEWS
+  PARADE
+  PLACE
+  RIDGE
+  ROAD
+  SQUARE
+  STREET
+  TERRACE
+}
+
+enum EState {
+  NSW
+  VIC
+  QLD
+  WA
+  NT
+  SquareACT
+  TAS
+}
+
+enum EPropertyType {
+  HOUSE
+  TOWNHOUSE
+  UNIT
+  VILLA
+  LAND
+  ACREAGE
+  RURAL
+  APARTMENT
+  RETIREMENT
+}
+
+enum EPropertyAction {
+  SALE
+  AUCTION
+  OFFER
+  UNDER_OFFER
+  SOLDAT_AUTION
+  SOLD
+  RENT
+  LEASED
+}
+
+enum EPropertyPurpose {
+  RESIDENCIAL
+  COMMERCIAL
 }

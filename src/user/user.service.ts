@@ -83,9 +83,10 @@ export class UserService {
     }
 
     async getMe({id,email}: TGetMeParams){
-        const user = await this.prismaService.user.findUnique({
+        const user = await this.prismaService.user.findFirst({
             where: {
-                id
+                id,
+                email
             },
             select: {
                 email:true,

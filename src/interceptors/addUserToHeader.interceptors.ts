@@ -1,13 +1,7 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken'
-import { TUserInReq } from 'type';
-
-type TToken = {
-    exp: number,
-    data: TUserInReq,
-    iat: number
-}
+import { TToken } from 'type';
 
 @Injectable()
 export class AddUserIntoHeaderInterceptor implements NestInterceptor {
